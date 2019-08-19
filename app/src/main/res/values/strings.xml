@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TestApp</string>
+
+    <string name="UserLogin_key">login</string>
+    <string name="repoName_key">name</string>
+    <string name="realmDB_file_name">realmDB.realm</string>
+</resources>

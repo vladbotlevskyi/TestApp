@@ -7,11 +7,21 @@ public class User extends RealmObject {
 
     @PrimaryKey
     private long id;
-    private String login, avatarURL;
+    private String data;
 
-//    public User (String login, long id, String avatarURL){
-//        this.login = login;
-//        this.id = id;
-//        this.avatarURL = avatarURL;
-//    }
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
 }

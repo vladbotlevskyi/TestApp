@@ -4,4 +4,8 @@
     <string name="UserLogin_key">login</string>
     <string name="repoName_key">name</string>
     <string name="realmDB_file_name">realmDB.realm</string>
+    <string name="userId_key">id</string>
+    <string name="repoId_key">id</string>
+    <string name="avatarURL_key">avatar_url</string>
+    <string name="repoOwner_key">owner</string>
 </resources>

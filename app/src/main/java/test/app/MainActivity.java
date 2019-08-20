@@ -2,7 +2,6 @@ package test.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,9 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import test.app.fetchData.FetchData;
+import io.realm.RealmResults;
+import test.app.db.RealmDB;
 import test.app.fetchData.FetchDataResponse;
+import test.app.model.User;
 
 public class MainActivity extends AppCompatActivity implements FetchDataResponse {
 
@@ -62,21 +62,29 @@ public class MainActivity extends AppCompatActivity implements FetchDataResponse
 
         usersListView = findViewById(R.id.usersList);
 
-        FetchData fd = new FetchData();
-        fd.setFdr(this);
-        fd.execute("https://api.github.com/users");
+//        DataFetch df = new DataFetch();
+//        df.setFdr(this);
+//        df.execute("https://api.github.com/users");
 
         Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder().
-                name(getResources().getString(R.string.realmDB_file_name)).build();
-        Realm realm = Realm.getInstance(config);
-        realm.close();
-        Log.i("Realm", realm.getPath());
+        setUpUsersListView();
+
     }
 
     @Override
-    public void onFetchDataResponse(JSONArray _data) {
-        final JSONArray data = _data;
+    public void onFetchDataResponse(JSONArray data) {
+        updateRealmDB(data);
+        setUpUsersListView();
+    }
+
+    private void setUpUsersListView() {
+        final JSONArray data;
+        try {
+            data = retrieveDataFromRealmDB();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
 
         List<String> usersNameList = new ArrayList();
 
@@ -104,9 +112,60 @@ public class MainActivity extends AppCompatActivity implements FetchDataResponse
                     e.printStackTrace();
                 }
                 startActivity(reposListView);
+//                Bundle args = new Bundle();
+//                try {
+//                    args.putString(getResources().getString(R.string.UserLogin_key),
+//                            ((JSONObject) data.get(i)).get(getResources().getString(R.string.UserLogin_key)).toString());
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                RepositoriesActivity fragment = new RepositoriesActivity();
+//                fragment.setArguments(args);
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                //transaction.replace(null, fragment);
+//                transaction.commit();
             }
         };
 
         usersListView.setOnItemClickListener(listClick);
+    }
+
+    private void updateRealmDB(JSONArray _data) {
+        final JSONArray data = _data;
+
+        Realm realm = RealmDB.getInstance(this);
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                try {
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject jo = (JSONObject) data.get(i);
+
+                        User user = new User();
+                        user.setId(jo.getLong(getResources().getString(R.string.userId_key)));
+                        user.setData(jo.toString());
+
+                        realm.copyToRealmOrUpdate(user);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        //realm.close();
+    }
+
+    private JSONArray retrieveDataFromRealmDB() throws JSONException {
+        Realm realm = RealmDB.getInstance(this);
+        RealmResults<User> users = realm.where(User.class).findAll();
+        String result = "[";
+        for (int i = 0; i < users.size(); i++) {
+            result = result + users.get(i).getData();
+            if (i != users.size() - 1)
+                result = result + ",";
+        }
+        return new JSONArray(result + "]");
+
     }
 }

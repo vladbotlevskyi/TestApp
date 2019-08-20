@@ -13,7 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class FetchData extends AsyncTask<String, Void, Void> {
+public class DataFetch extends AsyncTask<String, Void, Void> {
     private FetchDataResponse fdr = null;
 
     private JSONArray data;

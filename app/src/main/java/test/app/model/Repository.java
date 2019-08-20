@@ -7,11 +7,46 @@ public class Repository extends RealmObject {
 
     @PrimaryKey
     private long id;
-    private String name, owner;
+    private String owner;
+    private String data;
 
-//    public Repository(long id, String name, String owner){
-//        this.id = id;
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    //    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
 //        this.name = name;
+//    }
+//
+//    public String getOwner() {
+//        return owner;
+//    }
+//
+//    public void setOwner(String owner) {
 //        this.owner = owner;
 //    }
 }
